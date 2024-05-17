@@ -15,9 +15,13 @@ def fetch_spacex_launches():
         return response.json()
     else:
         return []
+ 
+def categorize_launches(launches):
+     successful = list(filter(launches, lambda x: x["success"] and not x["upcoming"]))
+     failed = list(filter(launches, lambda x: not x["success"] and not x ["upcoming"]))
+     upcoming = list(filter(launches, lambda x: x["upcoming"]))
     
 launches = fetch_spacex_launches()
-print(launches[0])
 
 if __name__ == "__main__":
     app.run(debug=True)  
