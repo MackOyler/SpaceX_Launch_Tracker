@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", launches=launches)
 
 def fetch_spacex_launches():
     url = "https://api.spacexdata.com/v4/launches"
@@ -17,11 +17,17 @@ def fetch_spacex_launches():
         return []
  
 def categorize_launches(launches):
-     successful = list(filter(launches, lambda x: x["success"] and not x["upcoming"]))
-     failed = list(filter(launches, lambda x: not x["success"] and not x ["upcoming"]))
-     upcoming = list(filter(launches, lambda x: x["upcoming"]))
+     successful = list(filter(lambda x: x["success"] and not x["upcoming"], launches))
+     failed = list(filter(lambda x: not x["success"] and not x ["upcoming"], launches))
+     upcoming = list(filter(lambda x: x["upcoming"], launches))
+     
+     return {
+         "successful": successful,
+         "failed": failed,
+         "upcoming": upcoming
+     }
     
-launches = fetch_spacex_launches()
+launches = categorize_launches(fetch_spacex_launches())
 
 if __name__ == "__main__":
     app.run(debug=True)  
